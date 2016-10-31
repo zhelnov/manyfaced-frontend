@@ -1,0 +1,37 @@
+{
+  "name": "manyfaced-frontend",
+  "version": "1.0.0",
+  "description": "Node frontend for manyfaced stats",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "author": "Zhelnov",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "clickhouse": "git+https://github.com/TimonKK/clickhouse.git",
+    "cookie-parser": "~1.4.1",
+    "ejs": "~2.4.1",
+    "express": "^4.14.0",
+    "griddle-react": "^0.6.1",
+    "highcharts": "^5.0.2",
+    "jquery": "^3.1.1",
+    "node-jsx": "^0.13.3",
+    "path": "*",
+    "promisify-node": "^0.4.0",
+    "react": "^15.3.2",
+    "react-dom": "^0.14.7",
+    "request": "^2.76.0",
+    "request-promise": "^4.1.1",
+    "underscore": "~1.6.0"
+  },
+  "devDependencies": {
+    "browserify": "~13.0.0",
+    "gulp": "~3.9.0",
+    "gulp-browserify": "~0.5.1",
+    "gulp-concat": "~2.6.0",
+    "node-jsx": "~0.13.3",
+    "reactify": "1.1.1"
+  }
+}
