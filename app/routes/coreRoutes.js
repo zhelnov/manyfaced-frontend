@@ -1,6 +1,6 @@
 var React = require('react'),
     ReactDOMServer = require('react-dom/server'),
-    ReactApp = require('../components/ReactApp');
+    ReactApp = require('../components/Report.jsx');
 
 module.exports = function(app) {
     app.get('/', function(req, res){

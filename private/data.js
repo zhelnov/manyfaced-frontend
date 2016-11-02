@@ -39,7 +39,7 @@ module.exports = {
 
     _execQuery: function (instance) {
         var raw = instance.serialize();
-        console.log('QUERY: ' + raw);
+        //console.log('QUERY: ' + raw);
         return clickhouse(raw);
     }
 };

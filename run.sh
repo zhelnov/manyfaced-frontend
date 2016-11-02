@@ -1,2 +1,2 @@
-gulp
+gulp scripts
 node app.js
