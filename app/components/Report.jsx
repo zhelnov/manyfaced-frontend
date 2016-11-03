@@ -1,70 +1,96 @@
 var React = require('react'),
     Select = require('./Select.jsx'),
     Griddle = require('griddle-react'),
-    Highcharts = require('highcharts'),
+    Chart = require('./Chart.jsx'),
     jQuery = require('jquery');
+
 
 module.exports = React.createClass({
 
-    getDefaultProps: function () {
+    getDefaultProps() {
         return {
-            columnMeta: [
-                'ProbeName', 
-                'BotIP',
-                'BotCountry',
-                'RequestCommand',
-                'RequestPath', 
-                'BotUA',
-                'BotDNSName'
-            ],
+            columnMeta: {
+                count: 'Кол-во',
+                ip: 'Адрес',
+                country: 'Код страны'
+            },
             perPageValues: [5, 10, 25, 50, 100],
             perPage: 10
         };
     },
 
-    getInitialState: function () {
+    getInitialState() {
         return {
-            rows: {},
+            rows: [],
             perPage: this.props.perPage
         };
     },
 
-    componentDidMount: function () {
-        jQuery.ajax('/lasthits', {method: 'get'})
+    componentDidMount() {
+        jQuery.ajax('/topbots', {method: 'get'})
             .done(function (rows) {
                 this.setState({rows: rows});
             }.bind(this));
     },
 
-    getColumnMeta: function () {
-        return this.props.columnMeta.map(function (row, index) {
+    getColumnMeta() {
+        return Object.keys(this.props.columnMeta).map(function (key, index) {
             return {
-                columnName: row,
+                columnName: key,
+                displayName: this.props.columnMeta[key],
                 order: index + 1,
                 locked: false,
                 visible: true
             };
-        });
+        }, this);
     },
 
-    onPerPageChange: function (e) {
+    getRandomColor() {
+        var letters = '0123456789ABCDEF',
+            color = '#';
+
+        for (var i=0; i<6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+
+        return color;
+    },
+
+    buildChartOptions() {
+        return {
+            xAxis: {
+                categories: this.state.rows.map(function (row) {
+                    return row.ip;
+                })
+            },
+            series: [{
+                segmentColor: this.getRandomColor(),
+                data: this.state.rows.map(function (row) {
+                    return [row.ip, row.count];
+                }).slice(0, 10)
+            }]
+        };
+    },
+
+    onPerPageChange(e) {
         this.setState({perPage: e.target.value});
     },
 
-    render: function () {
+    render() {
         return (
-            <div id="table-area">
-                <Select
+            <div>
+                <Chart params={this.buildChartOptions()} />
+                Записей на страницу: <Select
                     className="table__perpage-select"
                     defaultVal={this.props.perPage}
                     options={this.props.perPageValues}
                     onChange={this.onPerPageChange}
                 />
                 <Griddle
+                    useGriddleStyles={false}
                     results={this.state.rows}
                     columnMetadata={this.getColumnMeta()}
                     resultsPerPage={this.state.perPage}
-                    tableClassName="table"
                 />
             </div>
         )

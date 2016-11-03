@@ -5,13 +5,18 @@ module.exports = {
 
     TABLE: 'Honeypot.bearrequests',
 
-    getTopBots: function () {
+    getTopBots: function (limit) {
         var query = this._createQuery()
-            .select(['count(*)', 'BotIP', 'BotCountry'])
-            .as(['cnt', 'BotIP', 'BotCountry'])
+            .select({
+                count: 'count(*)',
+                ip: 'BotIP',
+                country: 'BotCountry'
+            })
             .from(this.TABLE)
             .groupby(['BotIP', 'BotCountry'])
-            .orderby('cnt', true);
+            .having('count > 10')
+            .orderby('count', true)
+            .limit(limit || 50);
 
         return this._execQuery(query);
     },
@@ -39,7 +44,7 @@ module.exports = {
 
     _execQuery: function (instance) {
         var raw = instance.serialize();
-        //console.log('QUERY: ' + raw);
+        console.log('QUERY: ' + raw);
         return clickhouse(raw);
     }
 };
