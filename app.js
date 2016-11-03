@@ -2,7 +2,9 @@ var express = require('express'),
     path = require('path'),
     app = express(),
     config = require('./configs/connection.json'),
-    bodyParser = require('body-parser');
+    bodyParser = require('body-parser'),
+    env = require('./configs/env.json'),
+    port = config[env + '-port'] || config['development-port'];
 
 require('node-jsx').install();
 
@@ -20,5 +22,5 @@ app.get('*', function(req, res) {
     res.json({route: '404 not found'});
 });
 
-app.listen(config.port);
-console.log('Listen on port: ' + config.port);
+app.listen(port);
+console.log((env ? env + '-mode | ' : '') + 'Listen on port: ' + port);

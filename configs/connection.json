@@ -1,5 +1,6 @@
 {
-    "port": "3333",
+    "production-port": "4444",
+    "development-port": "3333",
     "clithouse": {
 	"host": "http://127.0.0.1",
 	"port": "8123"
