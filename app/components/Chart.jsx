@@ -2,13 +2,16 @@ var React = require('react'),
     Highcharts = require('react-highcharts'),
     _ = require('underscore');
 
-module.exports = React.createClass({
+module.exports = Chart = React.createClass({
 
     getDefaultProps() {
         return {
             config: {
                 chart: {
                     type: 'bar'
+                },
+                credits: {
+                    enabled: false
                 },
                 legend: {
                     enabled: false

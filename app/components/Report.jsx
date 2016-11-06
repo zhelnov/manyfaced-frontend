@@ -1,55 +1,52 @@
 var React = require('react'),
-    Select = require('./Select.jsx'),
-    Griddle = require('griddle-react'),
+    Table = require('./Table.jsx'),
     Chart = require('./Chart.jsx'),
+    Period = require('./Period.jsx'),
     jQuery = require('jquery');
 
-
-module.exports = React.createClass({
+module.exports = Report = React.createClass({
 
     getDefaultProps() {
         return {
-            columnMeta: {
+            columns: {
                 count: 'Кол-во',
                 ip: 'Адрес',
                 country: 'Код страны'
-            },
-            perPageValues: [5, 10, 25, 50, 100],
-            perPage: 10
+            }
         };
     },
 
     getInitialState() {
         return {
-            rows: [],
-            perPage: this.props.perPage
+            rows: []
         };
     },
 
     componentDidMount() {
-        jQuery.ajax('/topbots', {method: 'get'})
-            .done(function (rows) {
-                this.setState({rows: rows});
-            }.bind(this));
+        this.fetch();
     },
 
-    getColumnMeta() {
-        return Object.keys(this.props.columnMeta).map(function (key, index) {
-            return {
-                columnName: key,
-                displayName: this.props.columnMeta[key],
-                order: index + 1,
-                locked: false,
-                visible: true
-            };
-        }, this);
+    fetch(options) {
+        jQuery
+            .ajax('/topbots', {
+                method: 'post',
+                data: options || {}
+            })
+            .done(function (rows) {
+                this.setState({
+                    rows: rows.map(row => {
+                        row.color = this.getRandomColor();
+                        return row;
+                    })
+                });
+            }.bind(this));
     },
 
     getRandomColor() {
         var letters = '0123456789ABCDEF',
             color = '#';
 
-        for (var i=0; i<6; i++) {
+        for (var i=0; i < 6; i++) {
             color += letters[Math.floor(Math.random() * 16)];
         }
 
@@ -59,41 +56,37 @@ module.exports = React.createClass({
     buildChartOptions() {
         return {
             xAxis: {
-                categories: this.state.rows.map(function (row) {
+                categories: this.state.rows.map(row => {
                     return row.ip;
                 })
             },
             series: [{
                 segmentColor: this.getRandomColor(),
-                data: this.state.rows.map(function (row) {
+                data: this.state.rows.map(row => {
                     return [row.ip, row.count];
                 }).slice(0, 10)
             }]
         };
     },
 
-    onPerPageChange(e) {
-        this.setState({perPage: e.target.value});
+    onPeriodChange(period) {
+        this.fetch({
+            from: period.startDate.toJSON(),
+            to: period.endDate.toJSON()
+        });
     },
 
     render() {
         return (
             <div>
                 <Chart params={this.buildChartOptions()} />
-                Записей на страницу: <Select
-                    className="table__perpage-select"
-                    defaultVal={this.props.perPage}
-                    options={this.props.perPageValues}
-                    onChange={this.onPerPageChange}
-                />
-                <Griddle
-                    useGriddleStyles={false}
-                    results={this.state.rows}
-                    columnMetadata={this.getColumnMeta()}
-                    resultsPerPage={this.state.perPage}
+                <Period onChange={this.onPeriodChange} />
+                <Table
+                    rows={this.state.rows}
+                    columns={this.props.columns}
                 />
             </div>
-        )
+        );
     }
 
 });

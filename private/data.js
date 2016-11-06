@@ -1,27 +1,44 @@
 var clickhouse = require('./clickhouse-wrapper'),
-    Query = require('./query');
+    Query = require('./query'),
+    moment = require('moment');
+
+function periodToCondition(period) {
+    var format = 'Y-M-DD',
+        from = period.from.format(format),
+        to = period.to.format(format);
+
+    return 'EventDate between toDate(\'' + from + '\') and toDate(\'' + to + '\')';
+}
 
 module.exports = {
 
     TABLE: 'Honeypot.bearrequests',
 
-    getTopBots: function (limit) {
+    getTopBots: function (options) {
         var query = this._createQuery()
             .select({
                 count: 'count(*)',
                 ip: 'BotIP',
                 country: 'BotCountry'
             })
-            .from(this.TABLE)
+            .from(this.TABLE);
+
+        if (options.period) {
+            query.where(periodToCondition(options.period));
+        }
+
+        query
             .groupby(['BotIP', 'BotCountry'])
-            .having('count > 10')
-            .orderby('count', true)
-            .limit(limit || 50);
+            .orderby('count', true);
+
+        if (options.limit) {
+            query.limit(options.limit);
+        }
 
         return this._execQuery(query);
     },
 
-    getLastHits: function () {
+    getLastHits: function (options) {
         var query = this._createQuery()
             .select([
                 'ProbeName', 
