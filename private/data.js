@@ -14,6 +14,22 @@ module.exports = {
 
     TABLE: 'Honeypot.bearrequests',
 
+    getLoadStats: function (options) {
+        var query = this._createQuery()
+            .select({
+                count: 'count(*)',
+                date: 'EventDate'
+            })
+            .from(this.TABLE);
+
+        if (options.period) {
+            query.where(periodToCondition(options.period));
+        }
+        query.groupby('EventDate');
+
+        return this._execQuery(query);
+    },
+
     getTopBots: function (options) {
         var query = this._createQuery()
             .select({
