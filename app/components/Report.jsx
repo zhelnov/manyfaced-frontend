@@ -2,12 +2,14 @@ var React = require('react'),
     Table = require('./Table.jsx'),
     Chart = require('./Chart.jsx'),
     Period = require('./Period.jsx'),
-    jQuery = require('jquery');
+    jQuery = require('jquery'),
+    Link = require('react-router').Link;
 
 module.exports = Report = React.createClass({
 
     getDefaultProps() {
         return {
+            apiEndpoint: '/topbots',
             columns: {
                 count: 'Кол-во',
                 ip: 'Адрес',
@@ -28,8 +30,8 @@ module.exports = Report = React.createClass({
 
     fetch(options) {
         jQuery
-            .ajax('/topbots', {
-                method: 'post',
+            .ajax(this.props.apiEndpoint, {
+                method: 'get',
                 data: options || {}
             })
             .done(function (rows) {
@@ -79,6 +81,7 @@ module.exports = Report = React.createClass({
     render() {
         return (
             <div>
+                Reports: <Link to={'/load'}>Load report</Link>
                 <Chart params={this.buildChartOptions()} />
                 <Period onChange={this.onPeriodChange} />
                 <Table

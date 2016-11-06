@@ -14,8 +14,7 @@ function handlerFactory(apiMethod, paramsFormatter) {
     };
 }
 
-module.exports = function (app) {
-    app.post('/topbots', handlerFactory('getTopBots', function (body) {
+function periodFormatter (body) {
         if (!body.from || !body.to) {
             return {};
         }
@@ -26,7 +25,10 @@ module.exports = function (app) {
                 to: moment(body.to)
             }
         };
-    }));
+    }
 
-    app.post('/lasthits', handlerFactory('getLastHits'));
+module.exports = function (app) {
+    app.get('/topbots', handlerFactory('getTopBots', periodFormatter));
+    app.get('/loadstats', handlerFactory('getLoadStats', periodFormatter));
+    app.get('/lasthits', handlerFactory('getLastHits'));
 };
