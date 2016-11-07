@@ -15,7 +15,7 @@ function handlerFactory(apiMethod, paramsFormatter) {
 }
 
 function periodFormatter(params) {
-    if (!params.from || !body.params) {
+    if (!params.from || !params.to) {
         return {};
     }
 
