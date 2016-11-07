@@ -1,5 +1,8 @@
 var React = require('react'),
-    Chart = require('./Chart.jsx');
+    Chart = require('./Chart.jsx'),
+    jQuery = require('jquery'),
+    Period = require('./Period.jsx'),
+    _ = require('underscore');
 
 module.exports = LoadReport = React.createClass({
 
@@ -11,64 +14,60 @@ module.exports = LoadReport = React.createClass({
                     type: 'line'
                 },
                 title: {
-                    text: 'Отчет по количеству запросов у ботов например'
-                },
-                yAxis: {
-                    title: {
-                        text: ''
-                    }
-                },
-                plotOptions: {
-                    bar: {
-                        dataLabels: {
-                            enabled: true
-                        }
-                    }
+                    text: 'Запросы ботов по дням'
                 }
-            },
-            params: {}
+            }
         };
+    },
+
+    getInitialState() {
+        return {
+            chartOptions: {}
+        };
+    },
+
+    componentDidMount() {
+        this.fetch().then(this.buildChartOptions);
     },
 
     fetch(options) {
-        jQuery
-            .ajax(this.props.apiEndpoint, {
-                method: 'get',
-                data: options || {}
-            })
-            .done(function (rows) {
-                debugger;
-            }.bind(this));
+        return jQuery.ajax(this.props.apiEndpoint, {
+            method: 'get',
+            data: options || {}
+        });
     },
 
-    buildChartOptions() {
-        return {};
-        return {
-            xAxis: {
-                categories: this.state.rows.map(row => {
-                    return row.ip;
-                })
-            },
-            series: [{
-                segmentColor: this.getRandomColor(),
-                data: this.state.rows.map(row => {
-                    return [row.ip, row.count];
-                }).slice(0, 10)
-            }]
-        };
+    buildChartOptions(rows) {
+        this.setState({
+            chartOptions: _.extend({}, this.props.config, {
+                xAxis: {
+                    categories: rows.map(row => {
+                        return row.date;
+                    })
+                },
+                series: [{
+                    name: 'Requests',
+                    data: rows.map(row => {
+                        return row.count;
+                    })
+                }]
+            })
+        });
     },
 
     onPeriodChange(period) {
-        this.fetch({
-            from: period.startDate.toJSON(),
-            to: period.endDate.toJSON()
-        });
+        this
+            .fetch({
+                from: period.startDate.toJSON(),
+                to: period.endDate.toJSON()
+            })
+            .then(this.buildChartOptions);
     },
 
     render() {
         return (
-            <div>тест
-                <Chart params={this.buildChartOptions()} />
+            <div>
+                <Chart params={this.state.chartOptions} />
                 <Period onChange={this.onPeriodChange} />
             </div>
         );

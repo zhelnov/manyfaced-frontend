@@ -11,11 +11,9 @@ module.exports = Period = React.createClass({
     },
 
     getInitialState() {
-        var stamp = moment().startOf('day');
-
         return {
-            startDate: stamp,
-            endDate: stamp
+            startDate: moment().startOf('day').subtract(1, 'week'),
+            endDate: moment().startOf('day')
         };  
     },
 

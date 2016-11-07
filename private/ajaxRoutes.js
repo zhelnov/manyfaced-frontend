@@ -3,7 +3,7 @@ var api = require('./data'),
 
 function handlerFactory(apiMethod, paramsFormatter) {
     return function (req, res) {
-        api[apiMethod](paramsFormatter ? paramsFormatter(req.body) : {})
+        api[apiMethod](paramsFormatter ? paramsFormatter(req.query) : {})
             .then(function (json) {
                 res.json(json);
             })
@@ -14,18 +14,18 @@ function handlerFactory(apiMethod, paramsFormatter) {
     };
 }
 
-function periodFormatter (body) {
-        if (!body.from || !body.to) {
-            return {};
-        }
-
-        return {
-            period: {
-                from: moment(body.from),
-                to: moment(body.to)
-            }
-        };
+function periodFormatter(params) {
+    if (!params.from || !body.params) {
+        return {};
     }
+
+    return {
+        period: {
+            from: moment(params.from),
+            to: moment(params.to)
+        }
+    };
+}
 
 module.exports = function (app) {
     app.get('/topbots', handlerFactory('getTopBots', periodFormatter));
