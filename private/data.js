@@ -2,12 +2,31 @@ var clickhouse = require('./clickhouse-wrapper'),
     Query = require('./query'),
     moment = require('moment');
 
+function formatDate(momentInstance) {
+    return momentInstance.format('Y-M-DD');
+}
+
 function periodToCondition(period) {
-    var format = 'Y-M-DD',
-        from = period.from.format(format),
-        to = period.to.format(format);
+    var from = formatDate(period.from),
+        to = formatDate(period.to);
 
     return 'EventDate between toDate(\'' + from + '\') and toDate(\'' + to + '\')';
+}
+
+function createBytimeTable(period) {
+    var table = [];
+
+    if (period.from.isAfter(period.to)) {
+        throw new Error('Wrong periods!');
+    }
+    for (var iterator = moment(period.from);
+        !period.to.isSame(iterator);
+        iterator.add(1, 'days')
+    ) {
+        table.push(formatDate(iterator));
+    }
+
+    return table;
 }
 
 module.exports = {
@@ -27,7 +46,26 @@ module.exports = {
         }
         query.groupby('EventDate');
 
-        return this._execQuery(query);
+        return this._execQuery(query).then(rows => {
+            if (!options.period) {
+                return rows;
+            }
+
+            return createBytimeTable(options.period).map(day => {
+                var matchRow = rows.find(row => {
+                        return row.date === day;
+                    });
+
+                if (matchRow) {
+                    return matchRow;
+                }
+
+                return {
+                    count: 0,
+                    date: day
+                };
+            });
+        });
     },
 
     getTopBots: function (options) {
