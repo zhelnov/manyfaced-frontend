@@ -21,8 +21,8 @@ function periodFormatter(params) {
 
     return {
         period: {
-            from: moment(params.from),
-            to: moment(params.to)
+            from: moment(params.from).startOf('day'),
+            to: moment(params.to).startOf('day')
         }
     };
 }
