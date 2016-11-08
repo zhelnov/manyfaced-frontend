@@ -24,24 +24,11 @@ module.exports = Report = React.createClass({
         };
     },
 
-    componentDidMount() {
-        this.fetch();
-    },
-
     fetch(options) {
-        jQuery
-            .ajax(this.props.apiEndpoint, {
-                method: 'get',
-                data: options || {}
-            })
-            .done(function (rows) {
-                this.setState({
-                    rows: rows.map(row => {
-                        row.color = this.getRandomColor();
-                        return row;
-                    })
-                });
-            }.bind(this));
+        return jQuery.ajax(this.props.apiEndpoint, {
+            method: 'get',
+            data: options || {}
+        });
     },
 
     getRandomColor() {
@@ -53,6 +40,15 @@ module.exports = Report = React.createClass({
         }
 
         return color;
+    },
+
+    updateData(rows) {
+        this.setState({
+            rows: rows.map(row => {
+                row.color = this.getRandomColor();
+                return row;
+            })
+        });
     },
 
     buildChartOptions() {
@@ -72,10 +68,12 @@ module.exports = Report = React.createClass({
     },
 
     onPeriodChange(period) {
-        this.fetch({
-            from: period.startDate.toJSON(),
-            to: period.endDate.toJSON()
-        });
+        this
+            .fetch({
+                from: period.startDate.toJSON(),
+                to: period.endDate.toJSON()
+            })
+            .then(this.updateData);
     },
 
     render() {

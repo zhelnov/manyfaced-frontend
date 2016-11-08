@@ -17,6 +17,10 @@ module.exports = Period = React.createClass({
         };  
     },
 
+    componentDidMount() {
+        this.props.onChange(this.state);
+    },
+
     mergeConfig() {
         return _.extend({}, this.props.config, this.props.params);
     },

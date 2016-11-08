@@ -26,10 +26,6 @@ module.exports = LoadReport = React.createClass({
         };
     },
 
-    componentDidMount() {
-        this.fetch().then(this.buildChartOptions);
-    },
-
     fetch(options) {
         return jQuery.ajax(this.props.apiEndpoint, {
             method: 'get',
