@@ -18,13 +18,12 @@ function periodFormatter(params) {
     if (!params.from || !params.to) {
         return {};
     }
+    if (!moment(params.from, 'Y-M-DD').isValid()
+        || !moment(params.to, 'Y-M-DD').isValid()) {
+        throw new Error('Invalid period');
+    }
 
-    return {
-        period: {
-            from: moment(params.from).startOf('day'),
-            to: moment(params.to).startOf('day')
-        }
-    };
+    return {period: params};
 }
 
 module.exports = function (app) {

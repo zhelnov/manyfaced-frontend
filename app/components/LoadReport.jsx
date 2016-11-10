@@ -54,8 +54,8 @@ module.exports = LoadReport = React.createClass({
     onPeriodChange(period) {
         this
             .fetch({
-                from: period.startDate.toJSON(),
-                to: period.endDate.toJSON()
+                from: period.startDate.format('Y-M-DD'),
+                to: period.endDate.format('Y-M-DD')
             })
             .then(this.buildChartOptions);
     },

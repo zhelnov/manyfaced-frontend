@@ -7,23 +7,20 @@ function formatDate(momentInstance) {
 }
 
 function periodToCondition(period) {
-    var from = formatDate(period.from),
-        to = formatDate(period.to);
-
-    return 'EventDate between toDate(\'' + from + '\') and toDate(\'' + to + '\')';
+    return 'EventDate >= toDate(\'' + period.from + '\') and EventDate <= toDate(\'' + period.to + '\')';
 }
 
 function createBytimeTable(period) {
-    var table = [];
+    var table = [],
+        from = moment(period.from).startOf('day'),
+        to = moment(period.to).startOf('day').add(1, 'days');
 
-    if (period.from.isAfter(period.to)) {
+    if (from.isAfter(to)) {
         throw new Error('Wrong periods!');
     }
-    for (var iterator = moment(period.from);
-        !period.to.isSame(iterator);
-        iterator.add(1, 'days')
-    ) {
-        table.push(formatDate(iterator));
+    while(!to.isSame(from)) {
+        table.push(formatDate(from));
+        from.add(1, 'days');
     }
 
     return table;

@@ -40,12 +40,12 @@ module.exports = Period = React.createClass({
             <div>
                 Start: <DatePicker
                         className="startDate"
-                        dateFormat="DD.MM.YYYY"
+                        dateFormat="YYYY-MM-DD"
                         selected={this.state.startDate}
                         onChange={this.startChanged} />
                 End: <DatePicker
                         className="endDate"
-                        dateFormat="DD.MM.YYYY"
+                        dateFormat="YYYY-MM-DD"
                         selected={this.state.endDate}
                         onChange={this.endChanged} />
             </div>
