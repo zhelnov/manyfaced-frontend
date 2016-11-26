@@ -43,6 +43,7 @@ module.exports = Report = React.createClass({
     },
 
     updateData(rows) {
+        debugger;
         this.setState({
             rows: rows.map(row => {
                 row.color = this.getRandomColor();

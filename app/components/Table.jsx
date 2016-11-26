@@ -23,6 +23,10 @@ module.exports = Table = React.createClass({
         debugger;
     },
 
+    onMoreClick() {
+
+    },
+
     renderRow(isHead, row) {
         var output = Object.keys(row).map((column, index) => {
                 if (this.props.techKeys.indexOf(column) === -1) {
@@ -59,6 +63,7 @@ module.exports = Table = React.createClass({
                     <thead>{this.renderRow(true, this.props.columns)}</thead>
                     <tbody>{this.renderRows(this.props.rows)}</tbody>
                 </table>
+                <button ></button>
             </div>
         );
     }

@@ -2,12 +2,17 @@ var clickhouse = require('./clickhouse-wrapper'),
     Query = require('./query'),
     moment = require('moment');
 
-function formatDate(momentInstance) {
-    return momentInstance.format('Y-M-DD');
+function formatDate(input) {
+    if (input instanceof moment) {
+        return input.format('Y-M-DD');
+    }
+    return moment(input).format('Y-M-DD');
 }
 
 function periodToCondition(period) {
-    return 'EventDate >= toDate(\'' + period.from + '\') and EventDate <= toDate(\'' + period.to + '\')';
+    var from = formatDate(period.from),
+        to = formatDate(period.to);
+    return 'EventDate >= toDate(\'' + from + '\') and EventDate <= toDate(\'' + to + '\')';
 }
 
 function createBytimeTable(period) {

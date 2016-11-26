@@ -1,13 +1,5 @@
 var Query = function () {
     this._query = '';
-
-    // map same multi-argument operators
-    ['from', 'from', 'group by'].forEach(function (operator) {
-        this[operator.replace(' ', '')] = function (input) {
-            this._multiOperator(operator, input);
-            return this;
-        }.bind(this);
-    }, this);
 };
 
 Query.prototype._stringOrArray = function (value) {
@@ -21,8 +13,22 @@ Query.prototype._multiOperator = function (operator, input) {
     this._query += ' ' + operator + ' ' + this._stringOrArray(input);
 };
 
+Query.prototype.from = function (input) {
+    if (input instanceof Query) {
+        this._query += ' from (' + input.serialize() + ')';
+    } else {
+        this._multiOperator('from', input);
+    }
+    return this;
+};
+
+Query.prototype.groupby = function (input) {
+    this._multiOperator('group by', input);
+    return this;
+};
+
 Query.prototype.orderby = function (input, isDesc) {
-    this._multiOperator(' order by', input);
+    this._multiOperator('order by', input);
     if (isDesc) {
         this._query += ' desc';
     }
@@ -52,8 +58,8 @@ Query.prototype.having = function (condition) {
     return this;
 };
 
-Query.prototype.limit = function (input) {
-    this._query += ' limit ' + Number(input);
+Query.prototype.limit = function (offset, limit) {
+    this._query += ' limit ' + Number(offset) + ', ' + Number(limit);
     return this;
 };
 
