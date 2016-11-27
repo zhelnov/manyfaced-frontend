@@ -13,13 +13,17 @@ module.exports = Report = React.createClass({
             columns: {
                 count: 'Кол-во',
                 ip: 'Адрес',
-                country: 'Код страны'
+                country: 'Страна'
             }
         };
     },
 
     getInitialState() {
         return {
+            period: {},
+            offset: 0,
+            limit: 10, //hack bad bad
+            total: 0,
             rows: []
         };
     },
@@ -42,14 +46,23 @@ module.exports = Report = React.createClass({
         return color;
     },
 
-    updateData(rows) {
-        debugger;
-        this.setState({
-            rows: rows.map(row => {
+    updateData(response) {
+        var isNew = this.state.offset === 0;
+            newRows = response.rows.map(row => {
                 row.color = this.getRandomColor();
                 return row;
-            })
+            });
+
+        this.setState({
+            offset: this.state.offset + this.state.limit,
+            total: response.total,
+            rows: isNew ? newRows : this.state.rows.concat(newRows)
         });
+
+        if (!isNew) {
+            var $doc = jQuery(document);
+            $doc.scrollTop($doc.height());
+        }
     },
 
     buildChartOptions() {
@@ -68,13 +81,50 @@ module.exports = Report = React.createClass({
         };
     },
 
+    perPageChanged(value) {
+        this.setState({limit: Number(value)});
+    },
+
     onPeriodChange(period) {
+        var period = {
+            from: period.startDate.toJSON(),
+            to: period.endDate.toJSON()
+        };
+        this.setState({
+            offset: 0,
+            period: period
+        });
         this
             .fetch({
-                from: period.startDate.toJSON(),
-                to: period.endDate.toJSON()
+                from: period.from,
+                to: period.to,
+                offset: 0,
+                limit: this.state.limit
             })
             .then(this.updateData);
+    },
+
+    onMoreClick() {
+        this
+            .fetch({
+                from: this.state.period.from,
+                to: this.state.period.to,
+                offset: this.state.offset,
+                limit: this.state.limit
+            })
+            .then(this.updateData);  
+    },
+
+    renderPagination: function () {
+        if (this.state.total - 1 <= this.state.rows.length) {
+            return (<div>All {this.state.total} items showed</div>);
+        }
+        return (
+            <div>
+            Showed {this.state.offset} of {this.state.total}
+            <button onClick={this.onMoreClick}>Moar...</button>
+            </div>
+        );
     },
 
     render() {
@@ -86,7 +136,9 @@ module.exports = Report = React.createClass({
                 <Table
                     rows={this.state.rows}
                     columns={this.props.columns}
+                    onPerPageChange={this.perPageChanged}
                 />
+                {this.renderPagination()}
             </div>
         );
     }

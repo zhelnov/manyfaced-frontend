@@ -77,7 +77,8 @@ module.exports = {
                 ip: 'BotIP',
                 country: 'BotCountry'
             })
-            .from(this.TABLE);
+            .from(this.TABLE),
+            countQuery;
 
         if (options.period) {
             query.where(periodToCondition(options.period));
@@ -87,11 +88,27 @@ module.exports = {
             .groupby(['BotIP', 'BotCountry'])
             .orderby('count', true);
 
+        countQuery = this._getCountQuery(query);
+
         if (options.limit) {
-            query.limit(options.limit);
+            query.limit(
+                typeof options.offset === 'undefined' ? 0 : options.offset,
+                options.limit
+            );
         }
 
-        return this._execQuery(query);
+        return Promise.all([
+            this._execQuery(query),
+            this._execQuery(countQuery)
+        ]).then(values => {
+            var total = values[1][0].total,
+                rows = values[0];
+            
+            return {
+                total: total,
+                rows: rows
+            };
+        });
     },
 
     getLastHits: function (options) {
@@ -109,6 +126,12 @@ module.exports = {
             .orderby('RequestTime', true);
 
         return this._execQuery(query);
+    },
+
+    _getCountQuery: function (query) {
+        return this._createQuery()
+            .select({total: 'count(*)'})
+            .from(query);
     },
 
     _createQuery: function () {
