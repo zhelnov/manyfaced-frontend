@@ -1,9 +1,13 @@
 # manyfaced-frontend
 Analytics frontend for web bots db.
 
-Install:
+#Prepare:
+Create /configs/env.json file with content:
+"development"
+
+#Install:
 npm install
 gulp scripts
 
-Run:
+#Run:
 gulp start

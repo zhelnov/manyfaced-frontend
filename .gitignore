@@ -2,6 +2,11 @@ configs/env.json
 public/*
 !public/css
 
+#vim
+*~
+*.swp
+*.swo
+
 # Logs
 logs
 *.log
