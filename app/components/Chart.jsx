@@ -17,7 +17,7 @@ module.exports = Chart = React.createClass({
                     enabled: false
                 },
                 title: {
-                    text: 'Отчет по количеству запросов у ботов например'
+                    text: 'Top bots stat'
                 },
                 yAxis: {
                     title: {
