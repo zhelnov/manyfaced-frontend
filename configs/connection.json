@@ -2,7 +2,7 @@
     "production-port": "4444",
     "development-port": "3333",
     "clithouse": {
-	"host": "http://127.0.0.1",
+	"host": "http://zlol.hack-stars.ru",
 	"port": "8123"
     }
 }

@@ -31,8 +31,8 @@ function periodFormatter(params) {
     if (!params.from || !params.to) {
         return {};
     }
-    if (!moment(params.from, 'Y-M-DD').isValid()
-        || !moment(params.to, 'Y-M-DD').isValid()) {
+    if (!moment(params.from, 'YYYY-MM-DD').isValid()
+        || !moment(params.to, 'YYYY-MM-DD').isValid()) {
         throw new Error('Invalid period');
     }
 

@@ -4,9 +4,9 @@ var clickhouse = require('./clickhouse-wrapper'),
 
 function formatDate(input) {
     if (input instanceof moment) {
-        return input.format('Y-M-DD');
+        return input.format('Y-MM-DD');
     }
-    return moment(input).format('Y-M-DD');
+    return moment(input).format('Y-MM-DD');
 }
 
 function periodToCondition(period) {
@@ -103,7 +103,7 @@ module.exports = {
         ]).then(values => {
             var total = values[1][0].total,
                 rows = values[0];
-            
+
             return {
                 total: total,
                 rows: rows
