@@ -6,6 +6,9 @@ function handlerFactory(apiMethod, paramsFormatter) {
     return function (req, res) {
         var options = {};
 
+        if (typeof req.query.preset !== 'undefined') {
+            options.preset = req.query.preset;
+        }
         if (typeof req.query.offset !== 'undefined') {
             options.offset = Number(req.query.offset);
         }
@@ -48,4 +51,5 @@ module.exports = function (app) {
     app.get('/topbots', handlerFactory('getTopBots', periodFormatter));
     app.get('/loadstats', handlerFactory('getLoadStats', periodFormatter));
     app.get('/lasthits', handlerFactory('getLastHits'));
+    app.get('/multireportdata', handlerFactory('getMultiReport', periodFormatter));
 };

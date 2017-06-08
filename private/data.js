@@ -35,6 +35,25 @@ module.exports = {
 
     TABLE: 'Honeypot.bearrequests',
 
+    getMultiReport: function (options) {
+	var presets = {
+		requestpath: "select count(*) as one, RequestPath as two from Honeypot.bearrequests where RequestRaw not like '%SMB%' group by RequestPath",
+		useragent: "select count(*) as one, BotUA as two from Honeypot.bearrequests where RequestRaw not like '%SMB%' group by BotUA",
+		botcountry: "select count(*) as one, BotCountry as two from Honeypot.bearrequests where RequestRaw not like '%SMB%' group by BotCountry",
+		smbrequestpath: "select count(*) as one, RequestPath as two from Honeypot.bearrequests where RequestRaw like '%SMB%' group by RequestPath"
+	};
+        var query = this._createQuery();
+	query._query = presets[options.preset];
+
+	if (!query) {
+		throw new Error('Invalid preset ' + options.preset);
+	}
+
+        return this._execQuery(query).then(rows => {
+             return rows;
+	});
+    },
+
     getLoadStats: function (options) {
         var query = this._createQuery()
             .select({
