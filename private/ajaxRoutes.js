@@ -6,6 +6,9 @@ function handlerFactory(apiMethod, paramsFormatter) {
     return function (req, res) {
         var options = {};
 
+        if (typeof req.query.preset !== 'undefined') {
+            options.preset = req.query.preset;
+        }
         if (typeof req.query.offset !== 'undefined') {
             options.offset = Number(req.query.offset);
         }
@@ -31,8 +34,8 @@ function periodFormatter(params) {
     if (!params.from || !params.to) {
         return {};
     }
-    if (!moment(params.from, 'Y-M-DD').isValid()
-        || !moment(params.to, 'Y-M-DD').isValid()) {
+    if (!moment(params.from, 'YYYY-MM-DD').isValid()
+        || !moment(params.to, 'YYYY-MM-DD').isValid()) {
         throw new Error('Invalid period');
     }
 
@@ -48,4 +51,5 @@ module.exports = function (app) {
     app.get('/topbots', handlerFactory('getTopBots', periodFormatter));
     app.get('/loadstats', handlerFactory('getLoadStats', periodFormatter));
     app.get('/lasthits', handlerFactory('getLastHits'));
+    app.get('/multireportdata', handlerFactory('getMultiReport', periodFormatter));
 };

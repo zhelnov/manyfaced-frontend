@@ -1,0 +1,25 @@
+body {
+	font-family: 'Open Sans', sans-serif;
+}
+table {
+	width:100%;
+}
+tbody tr {
+	font-size: 12px;
+}
+tbody tr:nth-child(odd) {
+	background-color: #f6f5f3;
+}
+tbody td:first-child {
+	width: 20px;
+}
+.period {
+	position: relative;
+	padding: 5px 0 20px 5px;
+}
+.period .explanation {
+	font-size: 10px;
+	color: gray;
+	position: absolute;
+	left: 5px;
+}

@@ -4,9 +4,9 @@ var clickhouse = require('./clickhouse-wrapper'),
 
 function formatDate(input) {
     if (input instanceof moment) {
-        return input.format('Y-M-DD');
+        return input.format('Y-MM-DD');
     }
-    return moment(input).format('Y-M-DD');
+    return moment(input).format('Y-MM-DD');
 }
 
 function periodToCondition(period) {
@@ -34,6 +34,25 @@ function createBytimeTable(period) {
 module.exports = {
 
     TABLE: 'Honeypot.bearrequests',
+
+    getMultiReport: function (options) {
+	var presets = {
+		requestpath: "select count(*) as one, RequestPath as two from Honeypot.bearrequests where RequestRaw not like '%SMB%' group by RequestPath",
+		useragent: "select count(*) as one, BotUA as two from Honeypot.bearrequests where RequestRaw not like '%SMB%' group by BotUA",
+		botcountry: "select count(*) as one, BotCountry as two from Honeypot.bearrequests where RequestRaw not like '%SMB%' group by BotCountry",
+		smbrequestpath: "select count(*) as one, RequestPath as two from Honeypot.bearrequests where RequestRaw like '%SMB%' group by RequestPath"
+	};
+        var query = this._createQuery();
+	query._query = presets[options.preset];
+
+	if (!query) {
+		throw new Error('Invalid preset ' + options.preset);
+	}
+
+        return this._execQuery(query).then(rows => {
+             return rows;
+	});
+    },
 
     getLoadStats: function (options) {
         var query = this._createQuery()
@@ -103,7 +122,7 @@ module.exports = {
         ]).then(values => {
             var total = values[1][0].total,
                 rows = values[0];
-            
+
             return {
                 total: total,
                 rows: rows

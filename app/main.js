@@ -5,6 +5,7 @@ var React = require('react'),
     Link = require('react-router').Link,
     Report = require('./components/Report.jsx'),
     LoadReport = require('./components/LoadReport.jsx'),
+    MultiReport = require('./components/MultiReport.jsx'),
     history = require('history'),
     mountNode = document.getElementById('react-main-mount');
 
@@ -12,6 +13,7 @@ ReactDOM.render(
     <Router history={history.createHistory()}>
         <Route path="/" component={Report} />
         <Route path="/load" component={LoadReport} />
+        <Route path="/multireport" component={MultiReport} />
     </Router>,
     mountNode
 );

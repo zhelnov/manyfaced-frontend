@@ -37,17 +37,18 @@ module.exports = Period = React.createClass({
 
     render() {
         return (
-            <div>
-                Start: <DatePicker
+            <div className="period">
+                From <DatePicker
                         className="startDate"
                         dateFormat="YYYY-MM-DD"
                         selected={this.state.startDate}
                         onChange={this.startChanged} />
-                End: <DatePicker
+                to  <DatePicker
                         className="endDate"
                         dateFormat="YYYY-MM-DD"
                         selected={this.state.endDate}
                         onChange={this.endChanged} />
+		<div className="explanation">Date range filter</div>
             </div>
         );
     }
